@@ -1,0 +1,14 @@
+[build-system]
+requires = ["pbr>=6.0.0", "setuptools>=64.0.0"]
+build-backend = "pbr.build"
+
+[project]
+name = "chi-hardware-manager"
+dynamic = ["version"]
+
+dependencies = [
+  "ironic_python_agent",
+]
+
+[project.entry-points."ironic_python_agent.hardware_managers"]
+chi_fugaku_manager = "fugaku:FugakuHardwareManager"
