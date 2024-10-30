@@ -25,13 +25,14 @@ def _detect_hardware():
     """Detect if we're running on a fukaku node or not."""
 
     dmi_info = _read_dmi()
-    LOG.warn(dmi_info)
     if (
         dmi_info.get("sys_vendor") == "FUJITSU"
         and dmi_info.get("product_name") == "FX700"
     ):
+        LOG.info(f"found Fugaku node! {dmi_info}")
         return True
     else:
+        LOG.info(f"We're not a Fugaku node, skipping: {dmi_info}")
         return False
 
 
