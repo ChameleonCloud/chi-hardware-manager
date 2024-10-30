@@ -16,4 +16,4 @@ dev = [
 ]
 
 [project.entry-points."ironic_python_agent.hardware_managers"]
-chi_fugaku_manager = "fugaku:FugakuHardwareManager"
+chi_fugaku_manager = "chi_hardware_manager.fugaku:FugakuHardwareManager"
