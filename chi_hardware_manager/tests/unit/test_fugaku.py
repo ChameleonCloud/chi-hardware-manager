@@ -18,12 +18,21 @@ class FugakuHardwareManager(base.IronicAgentTest):
 
     @mock.patch.object(fugaku, "_read_dmi")
     def test_detect_hardware(self, mock_read_dmi):
+        # correct case
         mock_read_dmi.return_value = {
             "sys_vendor": "FUJITSU",
             "product_name": "FX700",
         }
         self.assertTrue(fugaku._detect_hardware())
 
+        # handle newlines
+        mock_read_dmi.return_value = {
+            "sys_vendor": "FUJITSU\n",
+            "product_name": "FX700\n",
+        }
+        self.assertTrue(fugaku._detect_hardware())
+
+        # clearly incorrect case
         mock_read_dmi.return_value = {
             "sys_vendor": "OpenStack Foundation",
             "product_name": "OpenStack Nova",

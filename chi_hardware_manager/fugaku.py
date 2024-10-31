@@ -26,8 +26,8 @@ def _detect_hardware():
 
     dmi_info = _read_dmi()
     if (
-        dmi_info.get("sys_vendor") == "FUJITSU"
-        and dmi_info.get("product_name") == "FX700"
+        str.strip(dmi_info.get("sys_vendor")) == "FUJITSU"
+        and str.strip(dmi_info.get("product_name")) == "FX700"
     ):
         LOG.info(f"found Fugaku node! {dmi_info}")
         return True
