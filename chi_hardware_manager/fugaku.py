@@ -62,12 +62,15 @@ class FugakuHardwareManager(hardware.HardwareManager):
             return hardware.HardwareSupport.NONE
 
     def get_bmc_address(self):
+        LOG.info("Fugaku: no-op for bmc_address")
         return None
 
     def get_bmc_v6address(self):
+        LOG.info("Fugaku: no-op for bmc_v6address")
         return None
 
     def get_bmc_mac(self):
+        LOG.info("Fugaku: no-op for bmc_mac")
         return None
 
     def list_hardware_info(self):
@@ -79,7 +82,7 @@ class FugakuHardwareManager(hardware.HardwareManager):
         :returns: a dictionary representing inventory
         """
         start = time.time()
-        LOG.info("Collecting full inventory")
+        LOG.info("Fugaku: Collecting full inventory")
         # NOTE(dtantsur): don't forget to update docs when extending inventory
         hardware_info = {}
         hardware_info["interfaces"] = self.list_network_interfaces()
@@ -88,7 +91,7 @@ class FugakuHardwareManager(hardware.HardwareManager):
         hardware_info["memory"] = self.get_memory()
         hardware_info["bmc_address"] = self.get_bmc_address()
         hardware_info["bmc_v6address"] = self.get_bmc_v6address()
-        hardware_info["system_vendor"] = self.get_system_vendor_info()
+        # hardware_info["system_vendor"] = self.get_system_vendor_info()
         hardware_info["boot"] = self.get_boot_info()
         hardware_info["hostname"] = netutils.get_hostname()
 
