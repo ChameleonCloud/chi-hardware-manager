@@ -1,6 +1,7 @@
+import time
 from pathlib import Path
 
-from ironic_python_agent import errors, hardware
+from ironic_python_agent import errors, hardware, netutils
 from oslo_log import log
 
 LOG = log.getLogger()
@@ -68,3 +69,35 @@ class FugakuHardwareManager(hardware.HardwareManager):
 
     def get_bmc_mac(self):
         return None
+
+    def list_hardware_info(self):
+        """Return full hardware inventory as a serializable dict.
+
+        This inventory is sent to Ironic on lookup and to Inspector on
+        inspection.
+
+        :returns: a dictionary representing inventory
+        """
+        start = time.time()
+        LOG.info("Collecting full inventory")
+        # NOTE(dtantsur): don't forget to update docs when extending inventory
+        hardware_info = {}
+        hardware_info["interfaces"] = self.list_network_interfaces()
+        hardware_info["cpu"] = self.get_cpus()
+        hardware_info["disks"] = self.list_block_devices()
+        hardware_info["memory"] = self.get_memory()
+        hardware_info["bmc_address"] = self.get_bmc_address()
+        hardware_info["bmc_v6address"] = self.get_bmc_v6address()
+        hardware_info["system_vendor"] = self.get_system_vendor_info()
+        hardware_info["boot"] = self.get_boot_info()
+        hardware_info["hostname"] = netutils.get_hostname()
+
+        try:
+            hardware_info["bmc_mac"] = self.get_bmc_mac()
+        except errors.IncompatibleHardwareMethodError:
+            # if the hardware manager does not support obtaining the BMC MAC,
+            # we simply don't expose it.
+            pass
+
+        LOG.info("Inventory collected in %.2f second(s)", time.time() - start)
+        return hardware_info
