@@ -1,6 +1,6 @@
 from unittest import mock
+from unittest.mock import DEFAULT, MagicMock
 
-from ironic_python_agent import errors
 from ironic_python_agent.tests.unit import base
 
 from chi_hardware_manager import fugaku
@@ -8,7 +8,7 @@ from chi_hardware_manager import fugaku
 
 class FugakuHardwareManager(base.IronicAgentTest):
     def setUp(self):
-        super().setUp()
+        super(FugakuHardwareManager, self).setUp()
 
         self.hardware = fugaku.FugakuHardwareManager()
         self.node = {
@@ -52,31 +52,61 @@ class FugakuHardwareManager(base.IronicAgentTest):
         self.assertIsNone(self.hardware.get_bmc_v6address())
         self.assertIsNone(self.hardware.get_bmc_mac())
 
-    @mock.patch.object(fugaku.FugakuHardwareManager, "list_network_interfaces")
-    @mock.patch.object(fugaku.FugakuHardwareManager, "get_cpus")
-    @mock.patch.object(fugaku.FugakuHardwareManager, "list_block_devices")
-    @mock.patch.object(fugaku.FugakuHardwareManager, "get_memory")
-    @mock.patch.object(
-        fugaku.FugakuHardwareManager, "get_system_vendor_info", create=True
+    # @mock.patch(
+    #     "ironic_python_agent.hardware.GenericHardwareManager.list_network_interfaces"
+    # )
+    # @mock.patch("ironic_python_agent.hardware.GenericHardwareManager.get_cpus")
+    # @mock.patch(
+    #     "ironic_python_agent.hardware.GenericHardwareManager.list_block_devices"
+    # )
+    # @mock.patch("ironic_python_agent.hardware.GenericHardwareManager.get_memory")
+    # @mock.patch("ironic_python_agent.hardware.GenericHardwareManager.get_bmc_address")
+    # @mock.patch("ironic_python_agent.hardware.GenericHardwareManager.get_bmc_v6address")
+    # @mock.patch(
+    #     "ironic_python_agent.hardware.GenericHardwareManager.get_system_vendor_info"
+    # )
+    # @mock.patch("ironic_python_agent.hardware.GenericHardwareManager.get_boot_info")
+    # @mock.patch("ironic_python_agent.hardware.GenericHardwareManager.get_bmc_mac")
+
+    @mock.patch.multiple(
+        "ironic_python_agent.hardware.GenericHardwareManager",
+        list_network_interfaces=DEFAULT,
+        get_cpus=DEFAULT,
+        list_block_devices=DEFAULT,
+        get_memory=DEFAULT,
+        get_bmc_address=DEFAULT,
+        get_bmc_v6address=DEFAULT,
+        get_system_vendor_info=DEFAULT,
+        get_boot_info=DEFAULT,
+        get_bmc_mac=DEFAULT,
     )
-    @mock.patch.object(fugaku.FugakuHardwareManager, "get_boot_info")
     def test_list_hardware_info(
         self,
-        mock_list_iface,
-        mock_get_cpus,
-        mock_list_block_devices,
-        mock_get_memory,
-        mock_get_system_vendor_info,
-        mock_get_boot_info,
+        list_network_interfaces: mock.Mock,
+        get_cpus: mock.Mock,
+        list_block_devices: mock.Mock,
+        get_memory: mock.Mock,
+        get_bmc_address: mock.Mock,
+        get_bmc_v6address: mock.Mock,
+        get_system_vendor_info: mock.Mock,
+        get_boot_info: mock.Mock,
+        get_bmc_mac: mock.Mock,
+        **kwargs,
     ):
-        mock_list_iface.return_value = []
-        mock_get_cpus.return_value = []
-        mock_list_block_devices.return_value = []
-        mock_get_memory.return_value = []
-        mock_get_system_vendor_info.return_value = []
-        mock_get_boot_info.return_value = []
-
         hardware_info = self.hardware.list_hardware_info()
+
+        # methods from superclass, GenericHardwareManager
+        list_network_interfaces.assert_called_once()
+        get_cpus.assert_called_once()
+        list_block_devices.assert_called_once()
+        get_memory.assert_called_once()
+        get_system_vendor_info.assert_called_once()
+        get_boot_info.assert_called_once()
+
+        # overridden methods
+        get_bmc_address.assert_not_called()
+        get_bmc_v6address.assert_not_called()
+        get_bmc_mac.assert_not_called()
 
         self.assertIsNone(hardware_info["bmc_address"])
         self.assertIsNone(hardware_info["bmc_v6address"])

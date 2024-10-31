@@ -37,7 +37,7 @@ def _detect_hardware():
         return False
 
 
-class FugakuHardwareManager(hardware.HardwareManager):
+class FugakuHardwareManager(hardware.GenericHardwareManager):
     """Handle partial IPMI support on Fugaku nodes."""
 
     HARDWARE_MANAGER_NAME = "FugakuHardwareManager"
@@ -91,7 +91,7 @@ class FugakuHardwareManager(hardware.HardwareManager):
         hardware_info["memory"] = self.get_memory()
         hardware_info["bmc_address"] = self.get_bmc_address()
         hardware_info["bmc_v6address"] = self.get_bmc_v6address()
-        # hardware_info["system_vendor"] = self.get_system_vendor_info()
+        hardware_info["system_vendor"] = self.get_system_vendor_info()
         hardware_info["boot"] = self.get_boot_info()
         hardware_info["hostname"] = netutils.get_hostname()
 
