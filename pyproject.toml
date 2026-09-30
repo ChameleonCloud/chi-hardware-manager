@@ -17,3 +17,6 @@ dev = [
 
 [project.entry-points."ironic_python_agent.hardware_managers"]
 chi_fugaku_manager = "chi_hardware_manager.fugaku:FugakuHardwareManager"
+
+[project.entry-points."ironic_python_agent.inspector.collectors"]
+chameleon-core = "chi_hardware_manager.collectors.core:collect"
